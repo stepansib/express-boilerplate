@@ -4,6 +4,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+// Process env variables
+require('dotenv').config();
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -21,6 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req,res,next)=>{
   res.locals.hiddenMessage = 'Hola amigos!';
+  res.locals.demoVariable = process.env.DEMO_VARIABLE;
   next();
 });
 
