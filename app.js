@@ -12,6 +12,7 @@ var knexConfig = require('./knexfile');
 var knex = require('knex')(knexConfig[process.env.NODE_ENV]);
 const { Model } = require('objection');
 const { GeneralError } = require('./errors/errors');
+var HttpStatus = require('http-status-codes');
 
 // Give the knex instance to objection.
 Model.knex(knex);
@@ -57,7 +58,7 @@ app.use(function(err, req, res, next) {
   }
 
   // Other errors handler
-  let status = err.status || 500;
+  let status = err.status || HttpStatus.INTERNAL_SERVER_ERROR;
   res.status(status).json({
     status: 'error',
     code: status,

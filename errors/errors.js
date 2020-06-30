@@ -1,10 +1,12 @@
+var HttpStatus = require('http-status-codes');
+
 class GeneralError extends Error {
     constructor(message) {
         super();
         this.message = message;
     }
 
-    code = 500;
+    code = HttpStatus.INTERNAL_SERVER_ERROR;
 
     getCode() {
         return this.code;
@@ -12,11 +14,11 @@ class GeneralError extends Error {
 }
 
 class BadRequest extends GeneralError {
-    code = 400;
+    code = HttpStatus.BAD_REQUEST;
 }
 
 class NotFound extends GeneralError {
-    code = 404;
+    code = HttpStatus.NOT_FOUND;
 }
 
 module.exports = {
