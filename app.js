@@ -11,6 +11,7 @@ var logger = require('morgan');
 var knexConfig = require('./knexfile');
 var knex = require('knex')(knexConfig[process.env.NODE_ENV]);
 const { Model } = require('objection');
+const { GeneralError } = require('./errors/errors');
 
 // Give the knex instance to objection.
 Model.knex(knex);
@@ -44,15 +45,25 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  // Custom errors handler
+  if (err instanceof GeneralError) {
+    res.status(err.getCode()).json({
+      status: 'error',
+      code: err.getCode(),
+      message: err.message,
+    });
+  }
+
+  // Other errors handler
+  let status = err.status || 500;
+  res.status(status).json({
+    status: 'error',
+    code: status,
+    message: err.message,
+  });
+
 });
 
 module.exports = app;
