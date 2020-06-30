@@ -1,25 +1,22 @@
 'use strict';
 
+// Process env variables
+require('dotenv').config();
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var knex = require('knex')({
-  client: 'mysql2',
-  connection: {
-    host : process.env.DB_HOST,
-    user : process.env.DB_USER,
-    password : process.env.DB_PASSWORD,
-    database : process.env.DB_NAME
-  }
-});
+var knexConfig = require('./knexfile');
+var knex = require('knex')(knexConfig[process.env.NODE_ENV]);
+const { Model } = require('objection');
 
-// Process env variables
-require('dotenv').config();
+// Give the knex instance to objection.
+Model.knex(knex);
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var personsRouter = require('./routes/persons');
 
 var app = express();
 
@@ -35,12 +32,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req,res,next)=>{
   res.locals.hiddenMessage = 'Hola amigos!';
-  res.locals.demoVariable = process.env.DEMO_VARIABLE;
+  res.locals.demoVariable = process.env.NODE_ENV;
   next();
 });
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/persons', personsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
