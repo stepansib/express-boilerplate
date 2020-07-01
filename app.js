@@ -48,20 +48,14 @@ app.use(function(req, res, next) {
 
 app.use(function(err, req, res, next) {
 
-  // Custom errors handler
+  let code = err.status || HttpStatus.INTERNAL_SERVER_ERROR;
   if (err instanceof GeneralError) {
-    res.status(err.getCode()).json({
-      status: 'error',
-      code: err.getCode(),
-      message: err.message,
-    });
+    code = err.getCode();
   }
 
-  // Other errors handler
-  let status = err.status || HttpStatus.INTERNAL_SERVER_ERROR;
-  res.status(status).json({
+  res.status(code).json({
     status: 'error',
-    code: status,
+    code: code,
     message: err.message,
   });
 
