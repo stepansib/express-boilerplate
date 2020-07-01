@@ -1,7 +1,7 @@
-// Update with your config settings.
-
 // Process env variables
 require('dotenv').config();
+
+const { knexSnakeCaseMappers } = require('objection');
 
 module.exports = {
 
@@ -20,7 +20,8 @@ module.exports = {
     },
     migrations: {
       tableName: 'migrations'
-    }
+    },
+    ...knexSnakeCaseMappers()
   },
 
   staging: {
@@ -38,7 +39,8 @@ module.exports = {
     },
     migrations: {
       tableName: 'migrations'
-    }
+    },
+    ...knexSnakeCaseMappers()
   },
 
   production: {
@@ -56,7 +58,8 @@ module.exports = {
     },
     migrations: {
       tableName: 'migrations'
-    }
+    },
+    ...knexSnakeCaseMappers()
   }
 
 };
