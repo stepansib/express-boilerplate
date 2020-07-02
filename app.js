@@ -10,7 +10,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var knexConfig = require('./knexfile');
 var knex = require('knex')(knexConfig[process.env.NODE_ENV]);
-const { Model } = require('objection');
+const { Model, ValidationError } = require('objection');
 const { GeneralError } = require('./errors/errors');
 var HttpStatus = require('http-status-codes');
 
@@ -51,6 +51,10 @@ app.use(function(err, req, res, next) {
   let code = err.status || HttpStatus.INTERNAL_SERVER_ERROR;
   if (err instanceof GeneralError) {
     code = err.getCode();
+  }
+
+  if (err instanceof ValidationError) {
+    code = HttpStatus.BAD_REQUEST;
   }
 
   res.status(code).json({
