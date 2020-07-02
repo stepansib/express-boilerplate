@@ -19,6 +19,7 @@ Model.knex(knex);
 
 var indexRouter = require('./routes/index');
 var personsRouter = require('./routes/persons');
+var companiesRouter = require('./routes/companies');
 
 var app = express();
 
@@ -40,6 +41,7 @@ app.use((req,res,next)=>{
 
 app.use('/', indexRouter);
 app.use('/persons', personsRouter);
+app.use('/companies', companiesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
