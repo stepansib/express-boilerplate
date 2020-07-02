@@ -28,6 +28,21 @@ class Company extends Model {
         });
     }
 
+    static get relationMappings() {
+        const Person = require('./Person');
+
+        return {
+            persons: {
+                relation: Model.HasManyRelation,
+                modelClass: Person,
+                join: {
+                    from: 'companies.id',
+                    to: 'persons.companyId'
+                }
+            },
+        }
+    }
+
     static get jsonSchema() {
         return {
             type: 'object',

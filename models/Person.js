@@ -20,6 +20,9 @@ class Person extends Model {
 
     validateEmail() {
         return new Promise((resolve, reject) => {
+            if (!this.email) {
+                resolve();
+            }
             Person.query().where("email", this.email).then((persons, error) => {
                 if (persons.length === 0) {
                     resolve();
@@ -30,6 +33,21 @@ class Person extends Model {
                 }
             });
         });
+    }
+
+    static get relationMappings() {
+        const Company = require('./Company');
+
+        return {
+            company: {
+                relation: Model.BelongsToOneRelation,
+                modelClass: Company,
+                join: {
+                    from: 'persons.companyId',
+                    to: 'companies.id'
+                }
+            },
+        }
     }
 
     static get jsonSchema() {

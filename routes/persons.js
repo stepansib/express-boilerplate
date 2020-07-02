@@ -13,6 +13,14 @@ router.get('/all', async function (req, res, next) {
     }
 });
 
+router.get('/all/eager', async function (req, res, next) {
+    try {
+        res.status(HttpStatus.OK).json(await Person.query().withGraphFetched('company'));
+    } catch (error) {
+        next(error);
+    }
+});
+
 router.get('/', async function (req, res, next) {
     try {
         const person = await Person.query().findById(req.body.id);
