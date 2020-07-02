@@ -7,11 +7,7 @@ var HttpStatus = require('http-status-codes');
 
 router.get('/all', async function (req, res, next) {
     try {
-        const persons = await Person.query();
-        // if (_.isUndefined(person)) {
-        //     throw new NotFound('Person not found');
-        // }
-        res.status(HttpStatus.OK).json(persons);
+        res.status(HttpStatus.OK).json(await Person.query());
     } catch (error) {
         next(error);
     }
