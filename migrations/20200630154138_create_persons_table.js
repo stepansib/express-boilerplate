@@ -1,19 +1,17 @@
-
 exports.up = function(knex) {
-  return knex.raw(`CREATE TABLE express.persons (
-        id INT auto_increment NOT NULL,
-        first_name varchar(100) NOT NULL,
-        last_name varchar(100) NOT NULL,
-        email varchar(100) NULL,
-        CONSTRAINT persons_pk PRIMARY KEY (id),
-        CONSTRAINT persons_email UNIQUE KEY (email)
-)
-    ENGINE=InnoDB
-    DEFAULT CHARSET=utf8
-    COLLATE=utf8_general_ci;
-`)
+
+  return knex.schema.createTable('persons', function(table) {
+    table.increments();
+    table.string('firstName').notNullable();
+    table.string('lastName').notNullable();
+    table.string('email').unique();
+    table.timestamp('createdAt').defaultTo(knex.fn.now())
+  })
+
 };
 
 exports.down = function(knex) {
-  
+
+  return knex.schema.dropTable('persons');
+
 };
