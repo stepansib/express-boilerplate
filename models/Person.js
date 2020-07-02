@@ -15,10 +15,10 @@ class Person extends Model {
     }
 
     $beforeInsert(queryContext) {
-        return this.validateEmail();
+        return this.customValidation();
     }
 
-    validateEmail() {
+    customValidation() {
         return new Promise((resolve, reject) => {
             if (!this.email) {
                 resolve();

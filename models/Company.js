@@ -11,10 +11,10 @@ class Company extends Model {
     }
 
     $beforeInsert(queryContext) {
-        return this.validateName();
+        return this.customValidation();
     }
 
-    validateName() {
+    customValidation() {
         return new Promise((resolve, reject) => {
             Company.query().where("name", this.name).then((companies, error) => {
                 if (companies.length === 0) {
