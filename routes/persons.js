@@ -36,7 +36,7 @@ router.get('/', async function (req, res, next) {
 router.post('/create', async function (req, res, next) {
     try {
         const newPerson = Person.fromJson(req.body);
-        await Person.query().insert(newPerson);
+        await Person.query().insert(newPerson).withGraphFetched('company');
         res.status(HttpStatus.CREATED).json(newPerson);
     } catch (error) {
         next(error);
