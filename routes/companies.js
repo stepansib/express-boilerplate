@@ -1,9 +1,9 @@
-var express = require('express');
-var router = express.Router();
-var Company = require('../models/Company');
-var _ = require('lodash');
-var {NotFound, BadRequest} = require('../errors/errors');
-var HttpStatus = require('http-status-codes');
+const express = require('express');
+const router = express.Router();
+const Company = require('../models/Company');
+const _ = require('lodash');
+const {NotFound, BadRequest} = require('../errors/errors');
+const HttpStatus = require('http-status-codes');
 
 router.get('/all', async function (req, res, next) {
     try {

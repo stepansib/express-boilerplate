@@ -1,21 +1,14 @@
-var express = require('express');
-var router = express.Router();
-var Person = require('../models/Person');
-var _ = require('lodash');
-var {NotFound, BadRequest} = require('../errors/errors');
-var HttpStatus = require('http-status-codes');
+const express = require('express');
+const router = express.Router();
+const Person = require('../models/Person');
+const _ = require('lodash');
+const {NotFound, BadRequest} = require('../errors/errors');
+const HttpStatus = require('http-status-codes');
+const PersonRepository = require('../repository/person');
 
 router.get('/all', async function (req, res, next) {
     try {
-        res.status(HttpStatus.OK).json(await Person.query());
-    } catch (error) {
-        next(error);
-    }
-});
-
-router.get('/all/eager', async function (req, res, next) {
-    try {
-        res.status(HttpStatus.OK).json(await Person.query().withGraphFetched('company'));
+        res.status(HttpStatus.OK).json(await PersonRepository.getAll());
     } catch (error) {
         next(error);
     }
@@ -23,11 +16,7 @@ router.get('/all/eager', async function (req, res, next) {
 
 router.get('/', async function (req, res, next) {
     try {
-        const person = await Person.query().findById(req.body.id);
-        if (_.isUndefined(person)) {
-            throw new NotFound('Person not found');
-        }
-        res.status(HttpStatus.OK).json(person);
+        res.status(HttpStatus.OK).json(await PersonRepository.getById(req.body.id));
     } catch (error) {
         next(error);
     }
@@ -45,10 +34,7 @@ router.post('/create', async function (req, res, next) {
 
 router.delete('/delete', async function (req, res, next) {
     try {
-        const person = await Person.query().findById(req.body.id);
-        if (_.isUndefined(person)) {
-            throw new NotFound('Person not found');
-        }
+        const person = await PersonRepository.getById(req.body.id);
         await Person.query().deleteById(person.id)
         res.sendStatus(HttpStatus.OK);
     } catch (error) {
