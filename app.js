@@ -34,9 +34,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-    Logger.info('API request', {...req.body});
-    res.locals.hiddenMessage = 'Hola amigos!';
-    res.locals.demoVariable = process.env.NODE_ENV;
+    Logger.info('Request', {
+        method: req.method,
+        originalUrl: req.originalUrl,
+        path: req.path,
+        requestBody: req.body
+    });
+
+    res.locals.env = process.env.NODE_ENV;
     next();
 });
 
@@ -59,6 +64,10 @@ app.use(function (err, req, res, next) {
     if (err instanceof ValidationError) {
         code = HttpStatus.BAD_REQUEST;
     }
+
+    Logger.error(err.message, {
+        errorCode: code
+    });
 
     res.status(code).json({
         status: 'error',
