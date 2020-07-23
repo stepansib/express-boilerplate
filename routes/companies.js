@@ -5,15 +5,7 @@ const _ = require('lodash');
 const {NotFound, BadRequest} = require('../errors/errors');
 const HttpStatus = require('http-status-codes');
 
-router.get('/all', async function (req, res, next) {
-    try {
-        res.status(HttpStatus.OK).json(await Company.query());
-    } catch (error) {
-        next(error);
-    }
-});
-
-router.get('/all/eager', async function (req, res, next) {
+router.get('/', async function (req, res, next) {
     try {
         res.status(HttpStatus.OK).json(await Company.query().withGraphFetched({
             persons: true,
@@ -23,9 +15,9 @@ router.get('/all/eager', async function (req, res, next) {
     }
 });
 
-router.get('/', async function (req, res, next) {
+router.get('/:id', async function (req, res, next) {
     try {
-        const company = await Company.query().findById(req.body.id);
+        const company = await Company.query().findById(req.params.id);
         if (_.isUndefined(company)) {
             throw new NotFound('Company not found');
         }

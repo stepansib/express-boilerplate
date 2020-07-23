@@ -2,11 +2,10 @@ const express = require('express');
 const router = express.Router();
 const Person = require('../models/Person');
 const _ = require('lodash');
-const {NotFound, BadRequest} = require('../errors/errors');
 const HttpStatus = require('http-status-codes');
 const PersonRepository = require('../repository/person');
 
-router.get('/all', async function (req, res, next) {
+router.get('/', async function (req, res, next) {
     try {
         res.status(HttpStatus.OK).json(await PersonRepository.getAll());
     } catch (error) {
@@ -14,9 +13,9 @@ router.get('/all', async function (req, res, next) {
     }
 });
 
-router.get('/', async function (req, res, next) {
+router.get('/:id', async function (req, res, next) {
     try {
-        res.status(HttpStatus.OK).json(await PersonRepository.getById(req.body.id));
+        res.status(HttpStatus.OK).json(await PersonRepository.getById(req.params.id));
     } catch (error) {
         next(error);
     }
