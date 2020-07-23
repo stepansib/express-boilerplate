@@ -12,7 +12,8 @@ var knex = require('knex')(knexConfig[process.env.NODE_ENV]);
 const {Model, ValidationError} = require('objection');
 const {GeneralError} = require('./errors/errors');
 var HttpStatus = require('http-status-codes');
-const {logger, logRequestResponse} = require('./services/logger');
+const {logger, createDefaultLogFieldsMiddleware, logRequestResponseMiddleware} = require('./services/logger');
+var httpContext = require('express-http-context');
 
 // Give the knex instance to objection.
 Model.knex(knex);
@@ -23,7 +24,6 @@ var companiesRouter = require('./routes/companies');
 
 var app = express();
 
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'twig');
@@ -32,7 +32,14 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(logRequestResponse);
+
+app.use(httpContext.middleware);
+// app.use(function(req, res, next) {
+//     httpContext.set('defaultMeta', {uuid: uuidV4()});
+//     next();
+// });
+app.use(createDefaultLogFieldsMiddleware);
+app.use(logRequestResponseMiddleware);
 
 app.use('/', indexRouter);
 app.use('/persons', personsRouter);
