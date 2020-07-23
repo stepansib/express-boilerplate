@@ -12,11 +12,7 @@ const logger = Winston.createLogger({
             handleExceptions: true,
             json: true,
             clientOpts: {
-                node: 'http://elastic:changeme@localhost:9200',
-                // log: 'debug',
-                // maxRetries: 2,
-                // requestTimeout: 10000,
-                // sniffOnStart: false,
+                node: 'http://elastic:changeme@localhost:9200'
             }
         })
     ],
