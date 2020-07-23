@@ -18,4 +18,31 @@ const logger = Winston.createLogger({
     ],
 });
 
-module.exports = logger;
+const logRequestResponse = (req, res, next) => {
+
+    // Log request
+    logger.info('Request', {
+        method: req.method,
+        originalUrl: req.originalUrl,
+        path: req.path,
+        requestBody: req.body,
+        env: process.env.NODE_ENV
+    });
+
+    // Log response
+    const startHrTime = process.hrtime();
+    res.on("finish", () => {
+        const elapsedHrTime = process.hrtime(startHrTime);
+        const elapsedTimeInMs = elapsedHrTime[0] * 1000 + elapsedHrTime[1] / 1e6;
+        logger.info('Response', {
+            durationMs: Math.round(elapsedTimeInMs)
+        });
+    });
+
+    next();
+}
+
+module.exports = {
+    logger: logger,
+    logRequestResponse: logRequestResponse
+};
