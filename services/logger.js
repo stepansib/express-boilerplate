@@ -2,6 +2,9 @@ const Winston = require('winston');
 const ElasticsearchTransport = require('winston-elasticsearch');
 
 const logger = Winston.createLogger({
+    defaultMeta: {
+        env: process.env.NODE_ENV
+    },
     transports: [
         new Winston.transports.Console({
             handleExceptions: true,
@@ -26,7 +29,6 @@ const logRequestResponse = (req, res, next) => {
         originalUrl: req.originalUrl,
         path: req.path,
         requestBody: req.body,
-        env: process.env.NODE_ENV
     });
 
     // Log response
