@@ -1,11 +1,16 @@
 const Winston = require('winston');
 const ElasticsearchTransport = require('winston-elasticsearch');
 
-module.exports = Winston.createLogger({
+const logger = Winston.createLogger({
     transports: [
-        new Winston.transports.Console(),
+        new Winston.transports.Console({
+            handleExceptions: true,
+            json: false,
+        }),
         new ElasticsearchTransport.ElasticsearchTransport({
             index: 'express',
+            handleExceptions: true,
+            json: true,
             clientOpts: {
                 node: 'http://elastic:changeme@localhost:9200',
                 // log: 'debug',
@@ -16,3 +21,5 @@ module.exports = Winston.createLogger({
         })
     ],
 });
+
+module.exports = logger;

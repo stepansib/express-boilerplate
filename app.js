@@ -33,12 +33,25 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 app.use((req, res, next) => {
+
+    // Log request
     Logger.info('Request', {
         method: req.method,
         originalUrl: req.originalUrl,
         path: req.path,
         requestBody: req.body
+    });
+
+    // Log response
+    const startHrTime = process.hrtime();
+    res.on("finish", () => {
+        const elapsedHrTime = process.hrtime(startHrTime);
+        const elapsedTimeInMs = elapsedHrTime[0] * 1000 + elapsedHrTime[1] / 1e6;
+        Logger.info('Response', {
+            durationMs: Math.round(elapsedTimeInMs)
+        });
     });
 
     res.locals.env = process.env.NODE_ENV;
