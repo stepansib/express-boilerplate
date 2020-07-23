@@ -12,7 +12,7 @@ var knex = require('knex')(knexConfig[process.env.NODE_ENV]);
 const {Model, ValidationError} = require('objection');
 const {GeneralError} = require('./errors/errors');
 var HttpStatus = require('http-status-codes');
-const {logRequestResponse} = require('./services/logger');
+const {logger, logRequestResponse} = require('./services/logger');
 
 // Give the knex instance to objection.
 Model.knex(knex);
@@ -54,7 +54,7 @@ app.use(function (err, req, res, next) {
         code = HttpStatus.BAD_REQUEST;
     }
 
-    Logger.error(err.message, {
+    logger.error(err.message, {
         errorCode: code
     });
 
