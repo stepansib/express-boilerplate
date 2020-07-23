@@ -41,7 +41,8 @@ app.use((req, res, next) => {
         method: req.method,
         originalUrl: req.originalUrl,
         path: req.path,
-        requestBody: req.body
+        requestBody: req.body,
+        env: process.env.NODE_ENV
     });
 
     // Log response
@@ -54,7 +55,6 @@ app.use((req, res, next) => {
         });
     });
 
-    res.locals.env = process.env.NODE_ENV;
     next();
 });
 
