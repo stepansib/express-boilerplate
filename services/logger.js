@@ -103,19 +103,10 @@ const winston = Winston.createLogger({
                     let out = `${info.timestamp} ${info.label} ${info.level}: ${info.message}`;
                     let metadata = [];
                     if (info.message === requestMessage) {
-                        if (info.metadata.requestPath) {
-                            metadata.push('Path: ' + info.metadata.requestPath);
-                        }
-                        if (info.metadata.requestMethod) {
-                            metadata.push('Method: ' + info.metadata.requestMethod);
-                        }
-                        if (info.metadata.responseStatusCode) {
-                            metadata.push('Status code: ' + info.metadata.responseStatusCode);
-                        }
-                        if (metadata.length > 0) {
-                            out += ' (' + metadata.join(', ') + ')';
-                        }
+                        if (info.metadata.requestMethod) metadata.push(info.metadata.requestMethod);
+                        if (info.metadata.requestOriginalUrl) metadata.push(info.metadata.requestOriginalUrl);
                     }
+                    if (metadata.length > 0) out += ' (' + metadata.join(' ') + ')';
                     return out;
                 }),
             ),
