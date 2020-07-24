@@ -32,6 +32,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Initialize logging
+process.on('unhandledRejection', (reason, promise) => {
+    throw reason;
+})
 app.use(httpContext.middleware);
 app.use(createDefaultLogFieldsMiddleware);
 app.use(logRequestResponseMiddleware);
