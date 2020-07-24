@@ -6,11 +6,12 @@ var httpContext = require('express-http-context');
 
 const createDefaultLogFieldsMiddleware = (req, res, next) => {
     httpContext.set('defaultMeta', {
-        uuid: uuidV4(),
-        originalUrl: req.originalUrl,
-        path: req.path,
-        method: req.method,
-        requestBody: req.body
+        requestUuid: uuidV4(),
+        requestOriginalUrl: req.originalUrl,
+        requestPath: req.path,
+        requestMethod: req.method,
+        requestBody: req.body,
+        requestParams: req.params
     });
     next();
 };
@@ -19,14 +20,34 @@ const logRequestResponseMiddleware = (req, res, next) => {
 
     // Log request
     logger.info('Request');
+    
+    // Get response body
+    let oldWrite = res.write,
+        oldEnd = res.end,
+        chunks = [],
+        responseBody;
+
+    res.write = function (chunk) {
+        chunks.push(chunk);
+        return oldWrite.apply(res, arguments);
+    };
+
+    res.end = function (chunk) {
+        if (chunk) chunks.push(chunk);
+        responseBody = Buffer.concat(chunks).toString('utf8');
+        oldEnd.apply(res, arguments);
+    };
 
     // Log response
     const startHrTime = process.hrtime();
-    res.on("finish", () => {
+    res.on("finish", (chunk) => {
         const elapsedHrTime = process.hrtime(startHrTime);
         const elapsedTimeInMs = elapsedHrTime[0] * 1000 + elapsedHrTime[1] / 1e6;
         logger.info('Response: ' + res.statusCode, {
-            durationMs: Math.round(elapsedTimeInMs)
+            responseDurationMs: Math.round(elapsedTimeInMs),
+            responseLocals: res.locals,
+            responseBody: responseBody,
+            responseStatusCode: res.statusCode
         });
     });
 
