@@ -20,7 +20,7 @@ const logRequestResponseMiddleware = (req, res, next) => {
 
     // Log request
     logger.info('Request');
-    
+
     // Get response body
     let oldWrite = res.write,
         oldEnd = res.end,
