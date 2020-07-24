@@ -1,4 +1,4 @@
-# ExpressJS demo project
+# ExpressJS API Boilerplate
 
 ## Instructions
     
