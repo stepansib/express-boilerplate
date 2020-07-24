@@ -112,7 +112,7 @@ const winston = Winston.createLogger({
             ),
         }),
         new ElasticsearchTransport.ElasticsearchTransport({
-            index: 'express',
+            index: config.get('appName'),
             handleExceptions: true,
             json: true,
             clientOpts: {
