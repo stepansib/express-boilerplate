@@ -1,14 +1,12 @@
 'use strict';
 
-// Process env variables
-require('dotenv').config();
-
+const config = require('config');
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const knexConfig = require('./knexfile');
-const knex = require('knex')(knexConfig[process.env.NODE_ENV]);
+const knex = require('knex')(knexConfig[config.get('environment')]);
 const {Model, ValidationError} = require('objection');
 const {GeneralError} = require('./errors/errors');
 const HttpStatus = require('http-status-codes');
