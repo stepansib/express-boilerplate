@@ -2,7 +2,10 @@ const Winston = require('winston');
 const ElasticsearchTransport = require('winston-elasticsearch');
 const {v4: uuidV4} = require("uuid");
 const _ = require("lodash");
-var httpContext = require('express-http-context');
+const httpContext = require('express-http-context');
+const config = require('config');
+
+const requestMessage = 'Request';
 
 const createDefaultLogFieldsMiddleware = (req, res, next) => {
     httpContext.set('defaultMeta', {
@@ -19,7 +22,7 @@ const createDefaultLogFieldsMiddleware = (req, res, next) => {
 const logRequestResponseMiddleware = (req, res, next) => {
 
     // Log request
-    logger.info('Request');
+    logger.info(requestMessage);
 
     // Get response body
     let oldWrite = res.write,
@@ -82,11 +85,40 @@ const logger = {
     }
 };
 
+const consoleFormat = Winston.format.printf(({level, message, label, timestamp}) => {
+    return `${timestamp} [${label}] ${level}: ${message}`;
+});
+
 const winston = Winston.createLogger({
     transports: [
         new Winston.transports.Console({
             handleExceptions: true,
             json: false,
+            format: Winston.format.combine(
+                Winston.format.metadata(),
+                Winston.format.label({label: config.get('appName')}),
+                Winston.format.colorize(),
+                Winston.format.timestamp(),
+                Winston.format.printf(info => {
+                    let out = `${info.timestamp} ${info.label} ${info.level}: ${info.message}`;
+                    let metadata = [];
+                    if (info.message === requestMessage) {
+                        if (info.metadata.requestPath) {
+                            metadata.push('Path: ' + info.metadata.requestPath);
+                        }
+                        if (info.metadata.requestMethod) {
+                            metadata.push('Method: ' + info.metadata.requestMethod);
+                        }
+                        if (info.metadata.responseStatusCode) {
+                            metadata.push('Status code: ' + info.metadata.responseStatusCode);
+                        }
+                        if (metadata.length > 0) {
+                            out += ' (' + metadata.join(', ') + ')';
+                        }
+                    }
+                    return out;
+                }),
+            ),
         }),
         new ElasticsearchTransport.ElasticsearchTransport({
             index: 'express',
@@ -95,8 +127,8 @@ const winston = Winston.createLogger({
             clientOpts: {
                 node: 'http://elastic:changeme@localhost:9200'
             }
-        })
-    ],
+        }),
+    ]
 });
 
 module.exports = {

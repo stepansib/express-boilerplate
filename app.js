@@ -61,7 +61,7 @@ app.use(function (err, req, res, next) {
         code = HttpStatus.BAD_REQUEST;
     }
 
-    logger.error(err.message, {
+    logger.info('Handled exception: ' + err.message, {
         errorCode: code
     });
 
